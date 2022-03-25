@@ -4,5 +4,9 @@ sagemaker_role_arn: arn:aws:iam::204009636635:role/sagemaker_execution_ds_role
 training_image_ecr_path: 204009636635.dkr.ecr.us-west-2.amazonaws.com/recommender_tst_archfix                        
 snf_ef_role_arn: arn:aws:iam::204009636635:role/Snowflake_External_Function_Role_Name
 snf_ef_role_principal: arn:aws:sts::204009636635:assumed-role/Snowflake_External_Function_Role_Name/snowflake
-training_job:<>                       
+
+# generate predictions
+training_job:<>
+s3_         
+
                       

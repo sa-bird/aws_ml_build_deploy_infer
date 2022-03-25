@@ -5,7 +5,25 @@ import time
 import boto3
 import os
 
-
+def wait_for_job_to_complete(client, job_name, job_type='training'):
+    if job_type == 'training':
+        waiter = client.get_waiter('training_job_completed_or_stopped')
+        waiter.wait(
+            TrainingJobName=job_name,
+            WaiterConfig={
+                'Delay': 123,
+                'MaxAttempts': 123
+            }
+        )
+    elif job_type == 'transform':        
+        waiter = client.get_waiter('transform_job_completed_or_stopped')
+        waiter.wait(
+            TransformJobName=job_name,
+            WaiterConfig={
+                'Delay': 123,
+                'MaxAttempts': 123
+            }
+        )        
 def train_and_deploy(event, context):
 
     # 200 is the HTTP status code for "ok".
@@ -76,15 +94,10 @@ def train_and_deploy(event, context):
         training_job_arn = response['TrainingJobArn']
         print(training_job_arn)
 
-        response['TrainingJobStatus'] = "running"
-        while (response['TrainingJobStatus']  not in ['Completed', 'Failed']):
-            response = client.describe_training_job(
-                TrainingJobName= training_job_name
-            )
-            time.sleep(30)
-        
+        wait_for_job_to_complete(client, training_job_name, job_type='training')        
         print("Training completed")
-        print("Creating the model")    
+        
+        print("Creating the model")
         
         s3_model_uri = os.path.join(s3_output_location, training_job_name,'output', 'model.tar.gz')
 
@@ -182,38 +195,79 @@ def generate_batch_predictions(event, context):
             model_name = row[1]
             # extract and transform the user_ids and item_ids posted to csv
             body = body + row[2] + "," + row[3] + "\n"
+
+        import pandas as pd
+        temp_filename = 'temp_file.csv'
+        pd.DataFrame(body).to_csv(temp_filename)    
         
         # invoke the SageMaker endpoint
         client = boto3.client('sagemaker')
         bucket = os.environ['s3_bucket'] 
         transform_jobname = "transform-job-" + time.strftime("%Y%m%d%H%M%S")
-
         
-        s3_output_location = 's3://{}/'.format(bucket)
-        
-        # TODO: upload to s3 location
+        local_directory = 'data'
+        prefix          = '/input'
 
+        s3 = boto3.resource('s3')
+
+        s3_input_location =  f's3://{bucket}/input/'
+        s3_output_location = f's3://{bucket}/predictions/'
+        
+        s3.meta.client.upload_file(temp_filename, bucket, s3_input_location + 'dataframe_for_scoring.csv')
 
         print(s3_output_location)
 
         response = client.create_transform_job(
-            TransformJobName=transform_jobname,
-            ModelName= model_name,
-            BatchStrategy='MultiRecord',
-            Body=body.encode('utf-8'),
-            ContentType='text/csv'
-        )
+                            TransformJobName=transform_jobname,
+                            ModelName= model_name,
+                            BatchStrategy='MultiRecord',
+                            Environment={
+                                'string': 'string'
+                            },
+                            TransformInput={
+                                'DataSource': {
+                                    'S3DataSource': {                                        
+                                        'S3Uri': s3_input_location + 'dataframe_for_scoring.csv'
+                                    }
+                                },
+                                'ContentType': 'text/csv', 
+                                'SplitType': 'Line'
+                            },
+                            TransformOutput={
+                                'S3OutputPath': s3_output_location,
+                                'AssembleWith': 'Line',
+                                
+                            },
+                            TransformResources={
+                                'InstanceType': 'ml.m3.medium',
+                                'InstanceCount': 123,
+                                'VolumeKmsKeyId': 'string'
+                            },
+                )
+        
+        wait_for_job_to_complete(client, transform_jobname, job_type='transform')
 
-        predictions = response["Body"].read().decode('utf-8') 
-
-        i = 0
+        modelarn =  response['ModelArn']
         array_of_rows_to_return = []
-        for prediction in iter(predictions.splitlines()):
-            # Put the returned row number and the returned value into an array.
-            row_to_return = [i, prediction]
-            # ... and add that array to the main array.
-            array_of_rows_to_return.append(row_to_return)
-            i = i + 1
+        # Put the returned row number and the returned value into an array.
+        row_to_return = [0, modelarn]
+
+        # ... and add that array to the main array.
+        array_of_rows_to_return.append(row_to_return)
+
+        # json_compatible_string_to_return = json.dumps({"data" : array_of_rows_to_return})
+
+        # i = 0
+        # array_of_rows_to_return = []
+        
+        # predictions = response["TransformJobArn"]
+
+        # for prediction in iter(predictions.splitlines()):
+        #     # Put the returned row number and the returned value into an array.
+        #     row_to_return = [i, prediction]
+        #     # ... and add that array to the main array.
+        #     array_of_rows_to_return.append(row_to_return)
+        #     i = i + 1
 
         json_compatible_string_to_return = json.dumps({"data" : array_of_rows_to_return})
 
