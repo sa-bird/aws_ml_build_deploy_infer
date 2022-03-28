@@ -63,18 +63,6 @@ def get_top_n(predictions, n=10):
 
     return top_n
 
-def save_predictions_to_snowflake(top_n, cur, output_table_name):
-    values = ""
-    for uid, user_ratings in top_n.items():
-        if values:
-            values = values + ","
-        values = values + "(" + str(int(uid)) + ", '" + str([int(iid) for (iid, _) in user_ratings]) + "')"
-    
-    insert_statement = "INSERT INTO " + output_table_name + " select column1, parse_json(column2) from values "
-    sql = insert_statement + values
-    #print(insert_statement + values)
-    print("Top 10 predictions for all users saved to Snowflake table named: ", output_table_name)
-    cur.execute(sql)
 
 # The function to execute the training.
 def train():
@@ -131,9 +119,7 @@ def train():
 
         top_n = get_top_n(predictions, n=10)
 
-        # save the top 10 recommended ratings for each user back into Snowflake
-        save_predictions_to_snowflake(top_n, cur, output_table_name)
-
+        
         # save the model
         dump.dump(os.path.join(model_path, 'model.pkl'), algo=algo)
         print('Training complete.')

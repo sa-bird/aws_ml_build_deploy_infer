@@ -21,7 +21,7 @@ then
 fi
 
 chmod +x recommendation_engine/train
-chmod +x recommendation_engine/serve
+
 
 # Get the account number associated with the current IAM credentials
 account=$(aws sts get-caller-identity --query Account --output text --profile ${aws_role})
