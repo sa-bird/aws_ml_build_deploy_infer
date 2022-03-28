@@ -1,9 +1,12 @@
 import json
 import datetime
-from multiprocessing.connection import wait
+
 import time
 import boto3
 import os
+import pandas as pd
+# from pandas.compat import StringIO
+from io import StringIO
 
 def wait_for_job_to_complete(client, job_name, job_type='training'):
     if job_type == 'training':
@@ -80,9 +83,9 @@ def train_and_deploy(event, context):
                 'S3OutputPath': s3_output_location
             },
             ResourceConfig={
-                'InstanceType': 'ml.m5.large',
-                'InstanceCount': 1,
-                'VolumeSizeInGB': 10,
+                'InstanceType': os.environ['training_instance_type'],
+                'InstanceCount': int(os.environ['training_instance_count']),
+                'VolumeSizeInGB': int(os.environ['training_volume_size_gb']),
             },
             EnableManagedSpotTraining=True,
             StoppingCondition={
@@ -195,10 +198,13 @@ def generate_batch_predictions(event, context):
             model_name = row[1]
             # extract and transform the user_ids and item_ids posted to csv
             body = body + row[2] + "," + row[3] + "\n"
-
-        import pandas as pd
+        
+        
         temp_filename = 'temp_file.csv'
-        pd.DataFrame(body).to_csv(temp_filename)    
+        df = pd.DataFrame(StringIO(body))
+        
+        print(df.head())
+        df.to_csv(temp_filename)    
         
         # invoke the SageMaker endpoint
         client = boto3.client('sagemaker')
@@ -206,14 +212,15 @@ def generate_batch_predictions(event, context):
         transform_jobname = "transform-job-" + time.strftime("%Y%m%d%H%M%S")
         
         local_directory = 'data'
-        prefix          = '/input'
+        prefix          = '/input/'
 
         s3 = boto3.resource('s3')
 
-        s3_input_location =  f's3://{bucket}/input/'
+        
+        s3_input_location =  f's3://{bucket}/{prefix}/'
         s3_output_location = f's3://{bucket}/predictions/'
         
-        s3.meta.client.upload_file(temp_filename, bucket, s3_input_location + 'dataframe_for_scoring.csv')
+        s3.meta.client.upload_file(temp_filename, bucket, prefix + 'dataframe_for_scoring.csv')
 
         print(s3_output_location)
 
@@ -221,17 +228,19 @@ def generate_batch_predictions(event, context):
                             TransformJobName=transform_jobname,
                             ModelName= model_name,
                             BatchStrategy='MultiRecord',
-                            Environment={
-                                'string': 'string'
-                            },
+                            MaxConcurrentTransforms= 32,
+                            MaxPayloadInMB= 100,
+                            
                             TransformInput={
                                 'DataSource': {
-                                    'S3DataSource': {                                        
+                                    'S3DataSource': {
+                                        "S3DataType": "S3Prefix",                                        
                                         'S3Uri': s3_input_location + 'dataframe_for_scoring.csv'
                                     }
                                 },
                                 'ContentType': 'text/csv', 
-                                'SplitType': 'Line'
+                                'SplitType': 'Line',
+                                "CompressionType": "None",
                             },
                             TransformOutput={
                                 'S3OutputPath': s3_output_location,
@@ -239,14 +248,14 @@ def generate_batch_predictions(event, context):
                                 
                             },
                             TransformResources={
-                                'InstanceType': 'ml.m3.medium',
-                                'InstanceCount': 123,
-                                'VolumeKmsKeyId': 'string'
+                                'InstanceType': os.environ['transform_instance_type'],
+                                'InstanceCount': int(os.environ['transform_instance_count']),                                
                             },
                 )
         
         wait_for_job_to_complete(client, transform_jobname, job_type='transform')
-
+        
+        print(f'predictions are in location: {s3_output_location}')
         modelarn =  response['ModelArn']
         array_of_rows_to_return = []
         # Put the returned row number and the returned value into an array.

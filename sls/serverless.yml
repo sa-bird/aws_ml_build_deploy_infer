@@ -1,4 +1,4 @@
-service: snf-demo-${file(./config.${self:provider.stage}.yml):unique_id}
+service: snf-demo-batchmode-${file(./config.${self:provider.stage}.yml):unique_id}
 
 frameworkVersion: ">=1.2.0 <4.0.0"
 
@@ -38,6 +38,12 @@ provider:
     s3_bucket: sagemaker-${self:service} 
     training_image_ecr_path: ${file(./config.${self:provider.stage}.yml):training_image_ecr_path}
     sagemaker_role_arn: ${file(./config.${self:provider.stage}.yml):sagemaker_role_arn}
+    training_instance_type: ${file(./config.${self:provider.stage}.yml):training_instance_type}
+    training_instance_count: ${file(./config.${self:provider.stage}.yml):training_instance_count}
+    training_volume_size_gb: ${file(./config.${self:provider.stage}.yml):training_volume_size_gb}
+    transform_instance_type: ${file(./config.${self:provider.stage}.yml):transform_instance_type}
+    transform_instance_count: ${file(./config.${self:provider.stage}.yml):transform_instance_count}
+    transform_volume_size_gb: ${file(./config.${self:provider.stage}.yml):transform_volume_size_gb}
 
 functions:
   train_and_deploy:
@@ -49,7 +55,7 @@ functions:
           authorizer: aws_iam
 
   invoke_model:
-    handler: handler.invoke_model
+    handler: handler.generate_batch_predictions
     events:
       - http:
           path: invoke

@@ -1,12 +1,16 @@
 unique_id: 204009636635
 region: us-west-2
 sagemaker_role_arn: arn:aws:iam::204009636635:role/sagemaker_execution_ds_role
-training_image_ecr_path: 204009636635.dkr.ecr.us-west-2.amazonaws.com/recommender_tst_archfix                        
+training_image_ecr_path: 204009636635.dkr.ecr.us-west-2.amazonaws.com/recommender_batch_mode                        
 snf_ef_role_arn: arn:aws:iam::204009636635:role/Snowflake_External_Function_Role_Name
 snf_ef_role_principal: arn:aws:sts::204009636635:assumed-role/Snowflake_External_Function_Role_Name/snowflake
 
-# generate predictions
-training_job:<>
-s3_         
+#resource provisioning
+training_instance_type: ml.m5.large
+training_instance_count: 1
+training_volume_size_gb: 10
 
+transform_instance_type: ml.t2.medium
+transform_instance_count: 1
+transform_volume_size_gb: 10
                       

@@ -1,8 +1,8 @@
 {
   "service": {
-    "service": "snf-demo2-204009636635",
+    "service": "snf-demo-batchmode-204009636635",
     "serviceObject": {
-      "name": "snf-demo2-204009636635"
+      "name": "snf-demo-batchmode-204009636635"
     },
     "provider": {
       "name": "aws",
@@ -51,9 +51,15 @@
       "environment": {
         "region": "us-west-2",
         "stage": "dev",
-        "s3_bucket": "sagemaker-snf-demo2-204009636635",
-        "training_image_ecr_path": "204009636635.dkr.ecr.us-west-2.amazonaws.com/recommender_tst_archfix",
-        "sagemaker_role_arn": "arn:aws:iam::204009636635:role/sagemaker_execution_ds_role"
+        "s3_bucket": "sagemaker-snf-demo-batchmode-204009636635",
+        "training_image_ecr_path": "204009636635.dkr.ecr.us-west-2.amazonaws.com/recommender_batch_mode",
+        "sagemaker_role_arn": "arn:aws:iam::204009636635:role/sagemaker_execution_ds_role",
+        "training_instance_type": "ml.m5.large",
+        "training_instance_count": "1",
+        "training_volume_size_gb": "10",
+        "transform_instance_type": "ml.t2.medium",
+        "transform_instance_count": "1",
+        "transform_volume_size_gb": "10"
       },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -129,22 +135,16 @@
               }
             }
           },
-          "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLogGroup": {
+          "TrainUnderscoreandUnderscoredeployLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/snf-demo2-204009636635-dev-train_and_generate_recommendations"
-            }
-          },
-          "DeployUnderscoremodelLogGroup": {
-            "Type": "AWS::Logs::LogGroup",
-            "Properties": {
-              "LogGroupName": "/aws/lambda/snf-demo2-204009636635-dev-deploy_model"
+              "LogGroupName": "/aws/lambda/snf-demo-batchmode-204009636635-dev-train_and_deploy"
             }
           },
           "InvokeUnderscoremodelLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/snf-demo2-204009636635-dev-invoke_model"
+              "LogGroupName": "/aws/lambda/snf-demo-batchmode-204009636635-dev-invoke_model"
             }
           },
           "IamRoleLambdaExecution": {
@@ -172,7 +172,7 @@
                     "Fn::Join": [
                       "-",
                       [
-                        "snf-demo2-204009636635",
+                        "snf-demo-batchmode-204009636635",
                         "dev",
                         "lambda"
                       ]
@@ -189,7 +189,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/snf-demo2-204009636635-dev*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/snf-demo-batchmode-204009636635-dev*:*"
                           }
                         ]
                       },
@@ -200,7 +200,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/snf-demo2-204009636635-dev*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/snf-demo-batchmode-204009636635-dev*:*:*"
                           }
                         ]
                       },
@@ -219,7 +219,7 @@
                 "Fn::Join": [
                   "-",
                   [
-                    "snf-demo2-204009636635",
+                    "snf-demo-batchmode-204009636635",
                     "dev",
                     {
                       "Ref": "AWS::Region"
@@ -230,27 +230,33 @@
               }
             }
           },
-          "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaFunction": {
+          "TrainUnderscoreandUnderscoredeployLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/snf-demo2-204009636635/dev/1646430335315-2022-03-04T21:45:35.315Z/snf-demo2-204009636635.zip"
+                "S3Key": "serverless/snf-demo-batchmode-204009636635/dev/1648322867103-2022-03-26T19:27:47.103Z/snf-demo-batchmode-204009636635.zip"
               },
-              "Handler": "handler.train_and_generate_recommendations",
+              "Handler": "handler.train_and_deploy",
               "Runtime": "python3.7",
-              "FunctionName": "snf-demo2-204009636635-dev-train_and_generate_recommendations",
+              "FunctionName": "snf-demo-batchmode-204009636635-dev-train_and_deploy",
               "MemorySize": 1024,
               "Timeout": 6,
               "Environment": {
                 "Variables": {
                   "region": "us-west-2",
                   "stage": "dev",
-                  "s3_bucket": "sagemaker-snf-demo2-204009636635",
-                  "training_image_ecr_path": "204009636635.dkr.ecr.us-west-2.amazonaws.com/recommender_tst_archfix",
-                  "sagemaker_role_arn": "arn:aws:iam::204009636635:role/sagemaker_execution_ds_role"
+                  "s3_bucket": "sagemaker-snf-demo-batchmode-204009636635",
+                  "training_image_ecr_path": "204009636635.dkr.ecr.us-west-2.amazonaws.com/recommender_batch_mode",
+                  "sagemaker_role_arn": "arn:aws:iam::204009636635:role/sagemaker_execution_ds_role",
+                  "training_instance_type": "ml.m5.large",
+                  "training_instance_count": "1",
+                  "training_volume_size_gb": "10",
+                  "transform_instance_type": "ml.t2.medium",
+                  "transform_instance_count": "1",
+                  "transform_volume_size_gb": "10"
                 }
               },
               "Role": {
@@ -261,41 +267,7 @@
               }
             },
             "DependsOn": [
-              "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLogGroup"
-            ]
-          },
-          "DeployUnderscoremodelLambdaFunction": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-              "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/snf-demo2-204009636635/dev/1646430335315-2022-03-04T21:45:35.315Z/snf-demo2-204009636635.zip"
-              },
-              "Handler": "handler.deploy_model",
-              "Runtime": "python3.7",
-              "FunctionName": "snf-demo2-204009636635-dev-deploy_model",
-              "MemorySize": 1024,
-              "Timeout": 6,
-              "Environment": {
-                "Variables": {
-                  "region": "us-west-2",
-                  "stage": "dev",
-                  "s3_bucket": "sagemaker-snf-demo2-204009636635",
-                  "training_image_ecr_path": "204009636635.dkr.ecr.us-west-2.amazonaws.com/recommender_tst_archfix",
-                  "sagemaker_role_arn": "arn:aws:iam::204009636635:role/sagemaker_execution_ds_role"
-                }
-              },
-              "Role": {
-                "Fn::GetAtt": [
-                  "IamRoleLambdaExecution",
-                  "Arn"
-                ]
-              }
-            },
-            "DependsOn": [
-              "DeployUnderscoremodelLogGroup"
+              "TrainUnderscoreandUnderscoredeployLogGroup"
             ]
           },
           "InvokeUnderscoremodelLambdaFunction": {
@@ -305,20 +277,26 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/snf-demo2-204009636635/dev/1646430335315-2022-03-04T21:45:35.315Z/snf-demo2-204009636635.zip"
+                "S3Key": "serverless/snf-demo-batchmode-204009636635/dev/1648322867103-2022-03-26T19:27:47.103Z/snf-demo-batchmode-204009636635.zip"
               },
-              "Handler": "handler.invoke_model",
+              "Handler": "handler.generate_batch_predictions",
               "Runtime": "python3.7",
-              "FunctionName": "snf-demo2-204009636635-dev-invoke_model",
+              "FunctionName": "snf-demo-batchmode-204009636635-dev-invoke_model",
               "MemorySize": 1024,
               "Timeout": 6,
               "Environment": {
                 "Variables": {
                   "region": "us-west-2",
                   "stage": "dev",
-                  "s3_bucket": "sagemaker-snf-demo2-204009636635",
-                  "training_image_ecr_path": "204009636635.dkr.ecr.us-west-2.amazonaws.com/recommender_tst_archfix",
-                  "sagemaker_role_arn": "arn:aws:iam::204009636635:role/sagemaker_execution_ds_role"
+                  "s3_bucket": "sagemaker-snf-demo-batchmode-204009636635",
+                  "training_image_ecr_path": "204009636635.dkr.ecr.us-west-2.amazonaws.com/recommender_batch_mode",
+                  "sagemaker_role_arn": "arn:aws:iam::204009636635:role/sagemaker_execution_ds_role",
+                  "training_instance_type": "ml.m5.large",
+                  "training_instance_count": "1",
+                  "training_volume_size_gb": "10",
+                  "transform_instance_type": "ml.t2.medium",
+                  "transform_instance_count": "1",
+                  "transform_volume_size_gb": "10"
                 }
               },
               "Role": {
@@ -332,40 +310,30 @@
               "InvokeUnderscoremodelLogGroup"
             ]
           },
-          "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaVersionfbU02fe30r5Tj1GW3KuEmSr0jiy2NjHEr0lNfrMZ18U": {
+          "TrainUnderscoreandUnderscoredeployLambdaVersionSbGTVGHrZv4a640f7WV5wijn0Ffz76QjcWdniyCI": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
-                "Ref": "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaFunction"
+                "Ref": "TrainUnderscoreandUnderscoredeployLambdaFunction"
               },
-              "CodeSha256": "7k0IJ55K0c0GIWgu4IQ6ib2jRi7gJDMm1QhSg/M45RU="
+              "CodeSha256": "RnjYFc7ydyuIdWjLUxdxqSkce9KBt4NrGoi9bkKLT7A="
             }
           },
-          "DeployUnderscoremodelLambdaVersionWqSupHQnWPohfWQ4Ey4XJgF10uPgu3qFIXA5RDTHedQ": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "DeployUnderscoremodelLambdaFunction"
-              },
-              "CodeSha256": "7k0IJ55K0c0GIWgu4IQ6ib2jRi7gJDMm1QhSg/M45RU="
-            }
-          },
-          "InvokeUnderscoremodelLambdaVersionUkvH3A2IR5z5COYfYGlTvpwfgvKTla2ZZvgkmViAt0": {
+          "InvokeUnderscoremodelLambdaVersionHIOIRpMusE1dJlwNECc3vUb2KyQLfjQy9oZZBEQAF0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "InvokeUnderscoremodelLambdaFunction"
               },
-              "CodeSha256": "7k0IJ55K0c0GIWgu4IQ6ib2jRi7gJDMm1QhSg/M45RU="
+              "CodeSha256": "RnjYFc7ydyuIdWjLUxdxqSkce9KBt4NrGoi9bkKLT7A="
             }
           },
           "ApiGatewayRestApi": {
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
-              "Name": "dev-snf-demo2-204009636635",
+              "Name": "dev-snf-demo-batchmode-204009636635",
               "EndpointConfiguration": {
                 "Types": [
                   "EDGE"
@@ -384,21 +352,6 @@
                 ]
               },
               "PathPart": "train",
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              }
-            }
-          },
-          "ApiGatewayResourceDeploy": {
-            "Type": "AWS::ApiGateway::Resource",
-            "Properties": {
-              "ParentId": {
-                "Fn::GetAtt": [
-                  "ApiGatewayRestApi",
-                  "RootResourceId"
-                ]
-              },
-              "PathPart": "deploy",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -450,7 +403,7 @@
                       ":lambda:path/2015-03-31/functions/",
                       {
                         "Fn::GetAtt": [
-                          "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaFunction",
+                          "TrainUnderscoreandUnderscoredeployLambdaFunction",
                           "Arn"
                         ]
                       },
@@ -462,53 +415,7 @@
               "MethodResponses": []
             },
             "DependsOn": [
-              "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaPermissionApiGateway"
-            ]
-          },
-          "ApiGatewayMethodDeployPost": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "HttpMethod": "POST",
-              "RequestParameters": {},
-              "ResourceId": {
-                "Ref": "ApiGatewayResourceDeploy"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "ApiKeyRequired": false,
-              "AuthorizationType": "AWS_IAM",
-              "Integration": {
-                "IntegrationHttpMethod": "POST",
-                "Type": "AWS_PROXY",
-                "Uri": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":apigateway:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":lambda:path/2015-03-31/functions/",
-                      {
-                        "Fn::GetAtt": [
-                          "DeployUnderscoremodelLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "/invocations"
-                    ]
-                  ]
-                }
-              },
-              "MethodResponses": []
-            },
-            "DependsOn": [
-              "DeployUnderscoremodelLambdaPermissionApiGateway"
+              "TrainUnderscoreandUnderscoredeployLambdaPermissionApiGateway"
             ]
           },
           "ApiGatewayMethodInvokePost": {
@@ -557,7 +464,7 @@
               "InvokeUnderscoremodelLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1646430334803": {
+          "ApiGatewayDeployment1648322866525": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -567,53 +474,15 @@
             },
             "DependsOn": [
               "ApiGatewayMethodTrainPost",
-              "ApiGatewayMethodDeployPost",
               "ApiGatewayMethodInvokePost"
             ]
           },
-          "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaPermissionApiGateway": {
+          "TrainUnderscoreandUnderscoredeployLambdaPermissionApiGateway": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
               "FunctionName": {
                 "Fn::GetAtt": [
-                  "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaFunction",
-                  "Arn"
-                ]
-              },
-              "Action": "lambda:InvokeFunction",
-              "Principal": "apigateway.amazonaws.com",
-              "SourceArn": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":execute-api:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":",
-                    {
-                      "Ref": "ApiGatewayRestApi"
-                    },
-                    "/*/*"
-                  ]
-                ]
-              }
-            }
-          },
-          "DeployUnderscoremodelLambdaPermissionApiGateway": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-              "FunctionName": {
-                "Fn::GetAtt": [
-                  "DeployUnderscoremodelLambdaFunction",
+                  "TrainUnderscoreandUnderscoredeployLambdaFunction",
                   "Arn"
                 ]
               },
@@ -686,7 +555,7 @@
             "Type": "AWS::S3::Bucket",
             "Properties": {
               "AccessControl": "Private",
-              "BucketName": "sagemaker-snf-demo2-204009636635"
+              "BucketName": "sagemaker-snf-demo-batchmode-204009636635"
             }
           }
         },
@@ -696,34 +565,25 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-snf-demo2-204009636635-dev-ServerlessDeploymentBucketName"
+              "Name": "sls-snf-demo-batchmode-204009636635-dev-ServerlessDeploymentBucketName"
             }
           },
-          "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaFunctionQualifiedArn": {
+          "TrainUnderscoreandUnderscoredeployLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaVersionfbU02fe30r5Tj1GW3KuEmSr0jiy2NjHEr0lNfrMZ18U"
+              "Ref": "TrainUnderscoreandUnderscoredeployLambdaVersionSbGTVGHrZv4a640f7WV5wijn0Ffz76QjcWdniyCI"
             },
             "Export": {
-              "Name": "sls-snf-demo2-204009636635-dev-TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaFunctionQualifiedArn"
-            }
-          },
-          "DeployUnderscoremodelLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "DeployUnderscoremodelLambdaVersionWqSupHQnWPohfWQ4Ey4XJgF10uPgu3qFIXA5RDTHedQ"
-            },
-            "Export": {
-              "Name": "sls-snf-demo2-204009636635-dev-DeployUnderscoremodelLambdaFunctionQualifiedArn"
+              "Name": "sls-snf-demo-batchmode-204009636635-dev-TrainUnderscoreandUnderscoredeployLambdaFunctionQualifiedArn"
             }
           },
           "InvokeUnderscoremodelLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "InvokeUnderscoremodelLambdaVersionUkvH3A2IR5z5COYfYGlTvpwfgvKTla2ZZvgkmViAt0"
+              "Ref": "InvokeUnderscoremodelLambdaVersionHIOIRpMusE1dJlwNECc3vUb2KyQLfjQy9oZZBEQAF0"
             },
             "Export": {
-              "Name": "sls-snf-demo2-204009636635-dev-InvokeUnderscoremodelLambdaFunctionQualifiedArn"
+              "Name": "sls-snf-demo-batchmode-204009636635-dev-InvokeUnderscoremodelLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -749,7 +609,7 @@
               ]
             },
             "Export": {
-              "Name": "sls-snf-demo2-204009636635-dev-ServiceEndpoint"
+              "Name": "sls-snf-demo-batchmode-204009636635-dev-ServiceEndpoint"
             }
           }
         }
@@ -840,8 +700,8 @@
     },
     "pluginsData": {},
     "functions": {
-      "train_and_generate_recommendations": {
-        "handler": "handler.train_and_generate_recommendations",
+      "train_and_deploy": {
+        "handler": "handler.train_and_deploy",
         "events": [
           {
             "http": {
@@ -856,40 +716,16 @@
             }
           }
         ],
-        "name": "snf-demo2-204009636635-dev-train_and_generate_recommendations",
+        "name": "snf-demo-batchmode-204009636635-dev-train_and_deploy",
         "package": {},
         "memory": 1024,
         "timeout": 6,
         "runtime": "python3.7",
         "vpc": {},
-        "versionLogicalId": "TrainUnderscoreandUnderscoregenerateUnderscorerecommendationsLambdaVersionfbU02fe30r5Tj1GW3KuEmSr0jiy2NjHEr0lNfrMZ18U"
-      },
-      "deploy_model": {
-        "handler": "handler.deploy_model",
-        "events": [
-          {
-            "http": {
-              "path": "deploy",
-              "method": "post",
-              "authorizer": {
-                "type": "AWS_IAM",
-                "managedExternally": false,
-                "identitySource": "method.request.header.Authorization"
-              },
-              "integration": "AWS_PROXY"
-            }
-          }
-        ],
-        "name": "snf-demo2-204009636635-dev-deploy_model",
-        "package": {},
-        "memory": 1024,
-        "timeout": 6,
-        "runtime": "python3.7",
-        "vpc": {},
-        "versionLogicalId": "DeployUnderscoremodelLambdaVersionWqSupHQnWPohfWQ4Ey4XJgF10uPgu3qFIXA5RDTHedQ"
+        "versionLogicalId": "TrainUnderscoreandUnderscoredeployLambdaVersionSbGTVGHrZv4a640f7WV5wijn0Ffz76QjcWdniyCI"
       },
       "invoke_model": {
-        "handler": "handler.invoke_model",
+        "handler": "handler.generate_batch_predictions",
         "events": [
           {
             "http": {
@@ -904,13 +740,13 @@
             }
           }
         ],
-        "name": "snf-demo2-204009636635-dev-invoke_model",
+        "name": "snf-demo-batchmode-204009636635-dev-invoke_model",
         "package": {},
         "memory": 1024,
         "timeout": 6,
         "runtime": "python3.7",
         "vpc": {},
-        "versionLogicalId": "InvokeUnderscoremodelLambdaVersionUkvH3A2IR5z5COYfYGlTvpwfgvKTla2ZZvgkmViAt0"
+        "versionLogicalId": "InvokeUnderscoremodelLambdaVersionHIOIRpMusE1dJlwNECc3vUb2KyQLfjQy9oZZBEQAF0"
       }
     },
     "resources": {
@@ -919,7 +755,7 @@
           "Type": "AWS::S3::Bucket",
           "Properties": {
             "AccessControl": "Private",
-            "BucketName": "sagemaker-snf-demo2-204009636635"
+            "BucketName": "sagemaker-snf-demo-batchmode-204009636635"
           }
         }
       },
@@ -928,7 +764,7 @@
     "configValidationMode": "warn",
     "serviceFilename": "serverless.yml",
     "initialServerlessConfig": {
-      "service": "snf-demo2-204009636635",
+      "service": "snf-demo-batchmode-204009636635",
       "frameworkVersion": ">=1.2.0 <4.0.0",
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
@@ -941,10 +777,10 @@
       }
     },
     "layers": {},
-    "artifact": "/Users/srinivas/Documents/GitHub/sfguide-recommender-pipeline/sls/.serverless/snf-demo2-204009636635.zip"
+    "artifact": "/Users/srinivas/Documents/GitHub/aws_ml_build_deploy_infer/sls/.serverless/snf-demo-batchmode-204009636635.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/snf-demo2-204009636635/dev/1646430335315-2022-03-04T21:45:35.315Z",
-    "artifact": "snf-demo2-204009636635.zip"
+    "artifactDirectoryName": "serverless/snf-demo-batchmode-204009636635/dev/1648322867103-2022-03-26T19:27:47.103Z",
+    "artifact": "snf-demo-batchmode-204009636635.zip"
   }
 }
