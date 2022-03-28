@@ -90,7 +90,7 @@ class SnowFlake_Connector:
             account=param_values['/SNOWFLAKE/ACCOUNT_ID'],
             private_key=pkb,
             warehouse=self.warehouse,
-            database=self.warehouse,
+            database=self.database,
             schema=self.schema,
             role=self.role
             )
@@ -126,9 +126,17 @@ if __name__ == '__main__':
     # get the training data from Snowflake
     cur= sc.get_cursor()
 
-    sql =  "select * from " + input_table_name
+    sql = 'select current_role(), current_database(), current_schema(), current_warehouse();'
+
     df = get_data_in_pd(cur, sql)
 
     print(df.head())
+
+    sql = 'select * from CUSTOMER360_DATA_SCIENCE_DEV.C360_SCRATCH.ratings_train_data'
+
+    df = get_data_in_pd(cur, sql)
+    print(df.head())
+    df.to_csv('temp_csv.csv')
+
     cur.close()
 

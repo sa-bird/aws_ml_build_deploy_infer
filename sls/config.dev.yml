@@ -10,7 +10,15 @@ training_instance_type: ml.m5.large
 training_instance_count: 1
 training_volume_size_gb: 10
 
-transform_instance_type: ml.t2.medium
+transform_instance_type: ml.m5.large
 transform_instance_count: 1
 transform_volume_size_gb: 10
+
+container_type: custom
+#s3 data location
+data_prefix: /data/
+input_dir: input/
+output_dir: output/
+
+model_prefix: model/
                       

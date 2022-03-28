@@ -59,7 +59,11 @@
         "training_volume_size_gb": "10",
         "transform_instance_type": "ml.t2.medium",
         "transform_instance_count": "1",
-        "transform_volume_size_gb": "10"
+        "transform_volume_size_gb": "10",
+        "container_type": "custom",
+        "data_prefix": "/data/",
+        "input_dir": "input/",
+        "output_dir": "output/"
       },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -237,9 +241,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/snf-demo-batchmode-204009636635/dev/1648322867103-2022-03-26T19:27:47.103Z/snf-demo-batchmode-204009636635.zip"
+                "S3Key": "serverless/snf-demo-batchmode-204009636635/dev/1648489087616-2022-03-28T17:38:07.616Z/snf-demo-batchmode-204009636635.zip"
               },
-              "Handler": "handler.train_and_deploy",
+              "Handler": "handler.aws_job",
               "Runtime": "python3.7",
               "FunctionName": "snf-demo-batchmode-204009636635-dev-train_and_deploy",
               "MemorySize": 1024,
@@ -256,7 +260,11 @@
                   "training_volume_size_gb": "10",
                   "transform_instance_type": "ml.t2.medium",
                   "transform_instance_count": "1",
-                  "transform_volume_size_gb": "10"
+                  "transform_volume_size_gb": "10",
+                  "container_type": "custom",
+                  "data_prefix": "/data/",
+                  "input_dir": "input/",
+                  "output_dir": "output/"
                 }
               },
               "Role": {
@@ -277,7 +285,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/snf-demo-batchmode-204009636635/dev/1648322867103-2022-03-26T19:27:47.103Z/snf-demo-batchmode-204009636635.zip"
+                "S3Key": "serverless/snf-demo-batchmode-204009636635/dev/1648489087616-2022-03-28T17:38:07.616Z/snf-demo-batchmode-204009636635.zip"
               },
               "Handler": "handler.generate_batch_predictions",
               "Runtime": "python3.7",
@@ -296,7 +304,11 @@
                   "training_volume_size_gb": "10",
                   "transform_instance_type": "ml.t2.medium",
                   "transform_instance_count": "1",
-                  "transform_volume_size_gb": "10"
+                  "transform_volume_size_gb": "10",
+                  "container_type": "custom",
+                  "data_prefix": "/data/",
+                  "input_dir": "input/",
+                  "output_dir": "output/"
                 }
               },
               "Role": {
@@ -310,24 +322,24 @@
               "InvokeUnderscoremodelLogGroup"
             ]
           },
-          "TrainUnderscoreandUnderscoredeployLambdaVersionSbGTVGHrZv4a640f7WV5wijn0Ffz76QjcWdniyCI": {
+          "TrainUnderscoreandUnderscoredeployLambdaVersionBTzlfQih3qgCoiR1mjCZszOvZmfSgBRjWLVqdXFEqk": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "TrainUnderscoreandUnderscoredeployLambdaFunction"
               },
-              "CodeSha256": "RnjYFc7ydyuIdWjLUxdxqSkce9KBt4NrGoi9bkKLT7A="
+              "CodeSha256": "25QSN0EY+CD32gyZWQ/tV7eXIJLWayNh+9kvBR9ivEY="
             }
           },
-          "InvokeUnderscoremodelLambdaVersionHIOIRpMusE1dJlwNECc3vUb2KyQLfjQy9oZZBEQAF0": {
+          "InvokeUnderscoremodelLambdaVersionRy7LT5rBoYqajQgnRdmXvEqpXllk1DrsheT9IZEo": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "InvokeUnderscoremodelLambdaFunction"
               },
-              "CodeSha256": "RnjYFc7ydyuIdWjLUxdxqSkce9KBt4NrGoi9bkKLT7A="
+              "CodeSha256": "25QSN0EY+CD32gyZWQ/tV7eXIJLWayNh+9kvBR9ivEY="
             }
           },
           "ApiGatewayRestApi": {
@@ -464,7 +476,7 @@
               "InvokeUnderscoremodelLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1648322866525": {
+          "ApiGatewayDeployment1648489087068": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -571,7 +583,7 @@
           "TrainUnderscoreandUnderscoredeployLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "TrainUnderscoreandUnderscoredeployLambdaVersionSbGTVGHrZv4a640f7WV5wijn0Ffz76QjcWdniyCI"
+              "Ref": "TrainUnderscoreandUnderscoredeployLambdaVersionBTzlfQih3qgCoiR1mjCZszOvZmfSgBRjWLVqdXFEqk"
             },
             "Export": {
               "Name": "sls-snf-demo-batchmode-204009636635-dev-TrainUnderscoreandUnderscoredeployLambdaFunctionQualifiedArn"
@@ -580,7 +592,7 @@
           "InvokeUnderscoremodelLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "InvokeUnderscoremodelLambdaVersionHIOIRpMusE1dJlwNECc3vUb2KyQLfjQy9oZZBEQAF0"
+              "Ref": "InvokeUnderscoremodelLambdaVersionRy7LT5rBoYqajQgnRdmXvEqpXllk1DrsheT9IZEo"
             },
             "Export": {
               "Name": "sls-snf-demo-batchmode-204009636635-dev-InvokeUnderscoremodelLambdaFunctionQualifiedArn"
@@ -701,7 +713,7 @@
     "pluginsData": {},
     "functions": {
       "train_and_deploy": {
-        "handler": "handler.train_and_deploy",
+        "handler": "handler.aws_job",
         "events": [
           {
             "http": {
@@ -722,7 +734,7 @@
         "timeout": 6,
         "runtime": "python3.7",
         "vpc": {},
-        "versionLogicalId": "TrainUnderscoreandUnderscoredeployLambdaVersionSbGTVGHrZv4a640f7WV5wijn0Ffz76QjcWdniyCI"
+        "versionLogicalId": "TrainUnderscoreandUnderscoredeployLambdaVersionBTzlfQih3qgCoiR1mjCZszOvZmfSgBRjWLVqdXFEqk"
       },
       "invoke_model": {
         "handler": "handler.generate_batch_predictions",
@@ -746,7 +758,7 @@
         "timeout": 6,
         "runtime": "python3.7",
         "vpc": {},
-        "versionLogicalId": "InvokeUnderscoremodelLambdaVersionHIOIRpMusE1dJlwNECc3vUb2KyQLfjQy9oZZBEQAF0"
+        "versionLogicalId": "InvokeUnderscoremodelLambdaVersionRy7LT5rBoYqajQgnRdmXvEqpXllk1DrsheT9IZEo"
       }
     },
     "resources": {
@@ -780,7 +792,7 @@
     "artifact": "/Users/srinivas/Documents/GitHub/aws_ml_build_deploy_infer/sls/.serverless/snf-demo-batchmode-204009636635.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/snf-demo-batchmode-204009636635/dev/1648322867103-2022-03-26T19:27:47.103Z",
+    "artifactDirectoryName": "serverless/snf-demo-batchmode-204009636635/dev/1648489087616-2022-03-28T17:38:07.616Z",
     "artifact": "snf-demo-batchmode-204009636635.zip"
   }
 }

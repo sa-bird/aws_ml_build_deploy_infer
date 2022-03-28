@@ -44,10 +44,14 @@ provider:
     transform_instance_type: ${file(./config.${self:provider.stage}.yml):transform_instance_type}
     transform_instance_count: ${file(./config.${self:provider.stage}.yml):transform_instance_count}
     transform_volume_size_gb: ${file(./config.${self:provider.stage}.yml):transform_volume_size_gb}
+    container_type: ${file(./config.${self:provider.stage}.yml):container_type}
+    data_prefix: ${file(./config.${self:provider.stage}.yml):data_prefix}
+    input_dir: ${file(./config.${self:provider.stage}.yml):input_dir}
+    output_dir: ${file(./config.${self:provider.stage}.yml):output_dir}
 
 functions:
   train_and_deploy:
-    handler: handler.train_and_deploy
+    handler: handler.aws_job
     events:
       - http:
           path: train
