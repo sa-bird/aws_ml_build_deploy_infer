@@ -145,6 +145,7 @@
                   "Action": [
                     "sagemaker:CreateTrainingJob",
                     "sagemaker:CreateEndpointConfig",
+                    "sagemaker:CreateTransformJob",
                     "sagemaker:CreateEndpoint",
                     "sagemaker:CreateModel",
                     "sagemaker:InvokeEndpoint"
@@ -190,7 +191,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/snf-demo-batchmode-204009636635/dev/1648489087616-2022-03-28T17:38:07.616Z/snf-demo-batchmode-204009636635.zip"
+          "S3Key": "serverless/snf-demo-batchmode-204009636635/dev/1648512394049-2022-03-29T00:06:34.049Z/snf-demo-batchmode-204009636635.zip"
         },
         "Handler": "handler.aws_job",
         "Runtime": "python3.7",
@@ -207,7 +208,7 @@
             "training_instance_type": "ml.m5.large",
             "training_instance_count": "1",
             "training_volume_size_gb": "10",
-            "transform_instance_type": "ml.t2.medium",
+            "transform_instance_type": "ml.m5.large",
             "transform_instance_count": "1",
             "transform_volume_size_gb": "10",
             "container_type": "custom",
@@ -234,7 +235,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/snf-demo-batchmode-204009636635/dev/1648489087616-2022-03-28T17:38:07.616Z/snf-demo-batchmode-204009636635.zip"
+          "S3Key": "serverless/snf-demo-batchmode-204009636635/dev/1648512394049-2022-03-29T00:06:34.049Z/snf-demo-batchmode-204009636635.zip"
         },
         "Handler": "handler.generate_batch_predictions",
         "Runtime": "python3.7",
@@ -251,7 +252,7 @@
             "training_instance_type": "ml.m5.large",
             "training_instance_count": "1",
             "training_volume_size_gb": "10",
-            "transform_instance_type": "ml.t2.medium",
+            "transform_instance_type": "ml.m5.large",
             "transform_instance_count": "1",
             "transform_volume_size_gb": "10",
             "container_type": "custom",
@@ -271,24 +272,24 @@
         "InvokeUnderscoremodelLogGroup"
       ]
     },
-    "TrainUnderscoreandUnderscoredeployLambdaVersionBTzlfQih3qgCoiR1mjCZszOvZmfSgBRjWLVqdXFEqk": {
+    "TrainUnderscoreandUnderscoredeployLambdaVersionoR0ruTo7P24vEe5NsOr9izG97DPzDqLBjA86p9FE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "TrainUnderscoreandUnderscoredeployLambdaFunction"
         },
-        "CodeSha256": "25QSN0EY+CD32gyZWQ/tV7eXIJLWayNh+9kvBR9ivEY="
+        "CodeSha256": "6kDG9xB2seMFX0f5XxFws3RewIclnUCUHy2Tck9xOCY="
       }
     },
-    "InvokeUnderscoremodelLambdaVersionRy7LT5rBoYqajQgnRdmXvEqpXllk1DrsheT9IZEo": {
+    "InvokeUnderscoremodelLambdaVersionmIopTtOBrlgrvMzohfB1jcF7PEvmNVfLWwHLiefhEIY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "InvokeUnderscoremodelLambdaFunction"
         },
-        "CodeSha256": "25QSN0EY+CD32gyZWQ/tV7eXIJLWayNh+9kvBR9ivEY="
+        "CodeSha256": "6kDG9xB2seMFX0f5XxFws3RewIclnUCUHy2Tck9xOCY="
       }
     },
     "ApiGatewayRestApi": {
@@ -425,7 +426,7 @@
         "InvokeUnderscoremodelLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1648489087068": {
+    "ApiGatewayDeployment1648512393515": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -532,7 +533,7 @@
     "TrainUnderscoreandUnderscoredeployLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "TrainUnderscoreandUnderscoredeployLambdaVersionBTzlfQih3qgCoiR1mjCZszOvZmfSgBRjWLVqdXFEqk"
+        "Ref": "TrainUnderscoreandUnderscoredeployLambdaVersionoR0ruTo7P24vEe5NsOr9izG97DPzDqLBjA86p9FE"
       },
       "Export": {
         "Name": "sls-snf-demo-batchmode-204009636635-dev-TrainUnderscoreandUnderscoredeployLambdaFunctionQualifiedArn"
@@ -541,7 +542,7 @@
     "InvokeUnderscoremodelLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "InvokeUnderscoremodelLambdaVersionRy7LT5rBoYqajQgnRdmXvEqpXllk1DrsheT9IZEo"
+        "Ref": "InvokeUnderscoremodelLambdaVersionmIopTtOBrlgrvMzohfB1jcF7PEvmNVfLWwHLiefhEIY"
       },
       "Export": {
         "Name": "sls-snf-demo-batchmode-204009636635-dev-InvokeUnderscoremodelLambdaFunctionQualifiedArn"
