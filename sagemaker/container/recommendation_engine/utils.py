@@ -132,11 +132,11 @@ if __name__ == '__main__':
 
     print(df.head())
 
-    sql = 'select * from CUSTOMER360_DATA_SCIENCE_DEV.C360_SCRATCH.ratings_train_data'
+    sql = 'select * from CUSTOMER360_DATA_SCIENCE_DEV.C360_SCRATCH.no_ratings'
 
     df = get_data_in_pd(cur, sql)
     print(df.head())
-    df.to_csv('temp_csv.csv')
+    # df.to_csv('temp_csv.csv')
 
     cur.close()
 

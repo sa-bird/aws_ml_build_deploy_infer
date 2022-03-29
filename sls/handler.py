@@ -129,9 +129,7 @@ def create_deploy_job(rows):
     return _deploy_model(client, model_name, s3_model_uri)
 
 def create_batch_job(rows):
-    """
-    
-    """
+  
 # For each input row in the JSON object...
     for row in rows:
         model_name = row[2]

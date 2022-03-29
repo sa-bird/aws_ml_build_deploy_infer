@@ -12,6 +12,7 @@ provider:
       Action:
         - "sagemaker:CreateTrainingJob"
         - "sagemaker:CreateEndpointConfig"
+        - "sagemaker:CreateTransformJob"
         - "sagemaker:CreateEndpoint"
         - "sagemaker:CreateModel"
         - "sagemaker:InvokeEndpoint"
