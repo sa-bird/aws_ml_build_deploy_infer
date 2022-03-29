@@ -16,9 +16,10 @@ transform_volume_size_gb: 10
 
 container_type: custom
 #s3 data location
-data_prefix: /data/
-input_dir: input/
-output_dir: output/
+data_prefix: data
+input_dir: input
+output_dir: output
+df_for_scoring: dataframe_for_scoring.csv
 
-model_prefix: model/
+model_prefix: model
                       

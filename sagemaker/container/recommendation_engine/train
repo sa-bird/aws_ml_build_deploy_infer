@@ -75,7 +75,7 @@ def train():
 
         input_table_name = trainingParams.get('input_table_name', None)
         output_table_name = trainingParams.get('output_table_name', None)
-        aws_region = trainingParams.get('region', 'us-east-1')
+        aws_region = trainingParams.get('region', 'us-west-2')
 
         # get the Snowflake password from AWS SSM parameter store
         ssm = boto3.client('ssm', region_name=aws_region)

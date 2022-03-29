@@ -21,6 +21,7 @@ then
 fi
 
 chmod +x recommendation_engine/train
+chmod +x recommendation_engine/serve
 
 
 # Get the account number associated with the current IAM credentials

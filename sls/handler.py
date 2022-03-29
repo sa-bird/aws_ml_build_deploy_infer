@@ -8,26 +8,7 @@ import pandas as pd
 # from pandas.compat import StringIO
 from io import StringIO
 
-def wait_for_job_to_complete(client, job_name, job_type='training'):
-    if job_type == 'training':
-        waiter = client.get_waiter('training_job_completed_or_stopped')
-        waiter.wait(
-            TrainingJobName=job_name,
-            WaiterConfig={
-                'Delay': 123,
-                'MaxAttempts': 123
-            }
-        )
-    elif job_type == 'transform':        
-        waiter = client.get_waiter('transform_job_completed_or_stopped')
-        waiter.wait(
-            TransformJobName=job_name,
-            WaiterConfig={
-                'Delay': 123,
-                'MaxAttempts': 123
-            }
-        )        
-
+     
 def get_job_type(job_type):
     # complex processing
     job_type_processed = job_type
@@ -85,39 +66,7 @@ def create_training_job(rows):
     training_job_arn = response['TrainingJobArn']
 
     return training_job_arn
-
-
-def upload_to_s3(rows):
-    # For each input row in the JSON object...
-    body = ""
-    for row in rows:
-        #prefix = row[2]
-        # extract and transform the user_ids and item_ids posted to csv
-        body = body + row[2] + "," + row[3] + "\n"
-    
-    # print("body is ")
-    # print(body)
-    
-    temp_filename = 'temp_file.csv'
-    df = pd.DataFrame(StringIO(body), columns=['user_id', 'movie_id'])
-    
-    print("dataframe is....")
-    print(df.head())
-    df.to_csv(temp_filename)    
-    
-    bucket = os.environ['s3_bucket']                 
-    data_prefix = os.environ['data_prefix']
-    input_dir = os.environ['input_dir']
-    
-    prefix = os.path.join(data_prefix, input_dir)
-    
-    s3 = boto3.resource('s3')        
-    
-    response= s3.meta.client.upload_file(temp_filename, bucket, prefix + 'dataframe_for_scoring.csv')
-    print(response)
-    return 'successfully uploaded'
-    
-    
+     
 def create_deploy_job(rows):
     
     for row in rows:
@@ -133,17 +82,28 @@ def create_batch_job(rows):
 # For each input row in the JSON object...
     for row in rows:
         model_name = row[2]
-        s3_uri = row[3]
+        scoring_file_name = row[3]
         # extract and transform the user_ids and item_ids posted to csv
-            
+    print("model_name is ", model_name)        
     bucket = os.environ['s3_bucket'] 
     transform_jobname = "transform-job-" + time.strftime("%Y%m%d%H%M%S")
     
     output_dir = os.environ['output_dir']
     input_dir = os.environ['input_dir']
-    if s3_uri=='default':
-        s3_uri =  f's3://{bucket}/{input_dir}/'
-    s3_output_location = f's3://{bucket}/{output_dir}/'
+    data_prefix = os.environ['data_prefix']
+    
+    
+    input_prefix = os.path.join(data_prefix, input_dir)
+    output_prefix = os.path.join(data_prefix, output_dir)
+    
+    if scoring_file_name =='default':
+        scoring_file_name = os.environ['df_for_scoring']
+
+    s3_uri =  f"s3://{bucket}/{input_prefix}/{scoring_file_name}"
+    s3_output_location = f's3://{bucket}/{output_prefix}/'
+    
+    
+    print(s3_uri)
     
     client = boto3.client('sagemaker')
     
@@ -151,14 +111,14 @@ def create_batch_job(rows):
                             TransformJobName=transform_jobname,
                             ModelName= model_name,
                             BatchStrategy='MultiRecord',
-                            MaxConcurrentTransforms= 32,
-                            MaxPayloadInMB= 100,
+                            MaxConcurrentTransforms= 2,
+                            MaxPayloadInMB= 49,
                             
                             TransformInput={
                                 'DataSource': {
                                     'S3DataSource': {
                                         "S3DataType": "S3Prefix",                                        
-                                        'S3Uri': s3_uri + 'dataframe_for_scoring.csv'
+                                        'S3Uri': s3_uri 
                                     }
                                 },
                                 'ContentType': 'text/csv', 
@@ -177,8 +137,9 @@ def create_batch_job(rows):
                 )
                 
     print(f'predictions are in location: {s3_output_location}')
-    modelarn =  response['ModelArn']
-    return modelarn
+    
+    return response['TransformJobArn']
+
 
 def _deploy_model(client, model_name, s3_model_uri):
     
